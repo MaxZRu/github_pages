@@ -11,7 +11,7 @@
 После включения GitHub Pages в настройках репозитория сайт будет доступен по адресу:
 
 ```
-https://<твой-логин>.github.io/github_pages/
+https://maxzru.github.io/github_pages/
 ```
 
 Как включить: **Settings → Pages → Branch: main / root → Save**
