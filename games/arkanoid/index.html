@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Арканоид</title>
+  <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+  <div class="game-page">
+    <a href="../../index.html" class="back-btn">← Назад</a>
+    <h1>🧱 Арканоид</h1>
+    <div class="score">Очки: <span id="score">0</span> &nbsp;|&nbsp; Жизни: <span id="lives">3</span></div>
+    <canvas id="canvas" width="480" height="400"></canvas>
+    <p class="controls-hint">← → или мышь — двигать &nbsp;|&nbsp; Пробел — запустить &nbsp;|&nbsp; R — перезапуск</p>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const W = 480, H = 400;
+
+    const BRICK_COLS = 10, BRICK_ROWS = 5;
+    const BRICK_W = 40, BRICK_H = 16, BRICK_GAP = 4;
+    const BRICK_OFFSET_X = 20, BRICK_OFFSET_Y = 36;
+
+    const ROW_COLORS = ['#dc2626','#d97706','#16a34a','#2563eb','#7c3aed'];
+
+    let paddle, ball, bricks, score, lives, state;
+    const keys = {};
+
+    function init() {
+      paddle = {x: W/2 - 50, y: H - 28, w: 100, h: 12};
+      ball   = {x: W/2, y: H - 50, vx: 3.5, vy: -3.5, r: 7, moving: false};
+      score  = 0; lives = 3; state = 'playing';
+      document.getElementById('score').textContent = 0;
+      document.getElementById('lives').textContent = 3;
+      buildBricks();
+    }
+
+    function buildBricks() {
+      bricks = [];
+      for (let r = 0; r < BRICK_ROWS; r++)
+        for (let c = 0; c < BRICK_COLS; c++)
+          bricks.push({
+            x: BRICK_OFFSET_X + c * (BRICK_W + BRICK_GAP),
+            y: BRICK_OFFSET_Y + r * (BRICK_H + BRICK_GAP),
+            w: BRICK_W, h: BRICK_H,
+            color: ROW_COLORS[r],
+            alive: true
+          });
+    }
+
+    function update() {
+      if (state !== 'playing') return;
+
+      if (keys['ArrowLeft'])  paddle.x = Math.max(0, paddle.x - 7);
+      if (keys['ArrowRight']) paddle.x = Math.min(W - paddle.w, paddle.x + 7);
+
+      if (!ball.moving) {
+        ball.x = paddle.x + paddle.w / 2;
+        return;
+      }
+
+      ball.x += ball.vx;
+      ball.y += ball.vy;
+
+      // Side walls
+      if (ball.x - ball.r < 0)  { ball.x = ball.r;       ball.vx =  Math.abs(ball.vx); }
+      if (ball.x + ball.r > W)  { ball.x = W - ball.r;   ball.vx = -Math.abs(ball.vx); }
+      // Top wall
+      if (ball.y - ball.r < 0)  { ball.y = ball.r;       ball.vy =  Math.abs(ball.vy); }
+
+      // Paddle collision
+      if (ball.vy > 0 &&
+          ball.y + ball.r >= paddle.y &&
+          ball.y - ball.r <= paddle.y + paddle.h &&
+          ball.x > paddle.x - ball.r &&
+          ball.x < paddle.x + paddle.w + ball.r) {
+        const hit = (ball.x - (paddle.x + paddle.w / 2)) / (paddle.w / 2);
+        const speed = Math.sqrt(ball.vx*ball.vx + ball.vy*ball.vy);
+        ball.vx = hit * speed * 1.1;
+        ball.vy = -Math.abs(ball.vy);
+        ball.y  = paddle.y - ball.r;
+      }
+
+      // Bottom — lose life
+      if (ball.y - ball.r > H) {
+        lives--;
+        document.getElementById('lives').textContent = lives;
+        if (lives <= 0) { state = 'lost'; return; }
+        ball.x = paddle.x + paddle.w / 2;
+        ball.y = paddle.y - ball.r - 2;
+        ball.vx = 3.5; ball.vy = -3.5;
+        ball.moving = false;
+      }
+
+      // Brick collisions
+      for (const b of bricks) {
+        if (!b.alive) continue;
+        const bx = ball.x, by = ball.y, br = ball.r;
+        if (bx + br < b.x || bx - br > b.x + b.w ||
+            by + br < b.y || by - br > b.y + b.h) continue;
+
+        b.alive = false;
+        score += 10;
+        document.getElementById('score').textContent = score;
+
+        // Reflect off nearest face
+        const oL = bx + br - b.x;
+        const oR = b.x + b.w - (bx - br);
+        const oT = by + br - b.y;
+        const oB = b.y + b.h - (by - br);
+        if (Math.min(oL, oR) < Math.min(oT, oB)) ball.vx *= -1;
+        else                                       ball.vy *= -1;
+      }
+
+      if (bricks.every(b => !b.alive)) state = 'won';
+    }
+
+    function draw() {
+      ctx.fillStyle = '#0d0d1a';
+      ctx.fillRect(0, 0, W, H);
+
+      // Bricks
+      bricks.filter(b => b.alive).forEach(b => {
+        ctx.fillStyle = b.color;
+        ctx.beginPath();
+        ctx.roundRect(b.x, b.y, b.w, b.h, 3);
+        ctx.fill();
+        ctx.fillStyle = 'rgba(255,255,255,0.2)';
+        ctx.fillRect(b.x+2, b.y+2, b.w-4, 4);
+      });
+
+      // Paddle
+      const grad = ctx.createLinearGradient(paddle.x, paddle.y, paddle.x, paddle.y + paddle.h);
+      grad.addColorStop(0, '#c4b5fd');
+      grad.addColorStop(1, '#7c3aed');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.roundRect(paddle.x, paddle.y, paddle.w, paddle.h, 6);
+      ctx.fill();
+
+      // Ball
+      ctx.shadowColor = '#a78bfa';
+      ctx.shadowBlur = 18;
+      ctx.fillStyle = '#fff';
+      ctx.beginPath();
+      ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI*2);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+
+      // Launch hint
+      if (state === 'playing' && !ball.moving) {
+        ctx.fillStyle = '#a78bfa66';
+        ctx.font = '15px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('Пробел или мышь — запустить', W/2, H - 48);
+      }
+
+      // End screen
+      if (state === 'won' || state === 'lost') {
+        ctx.fillStyle = 'rgba(0,0,0,0.75)';
+        ctx.fillRect(0, H/2 - 65, W, 120);
+        ctx.font = 'bold 36px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = state === 'won' ? '#4ade80' : '#f87171';
+        ctx.fillText(state === 'won' ? '🎉 ПОБЕДА!' : '💀 ПРОИГРЫШ', W/2, H/2 - 10);
+        ctx.font = '18px Arial';
+        ctx.fillStyle = '#a78bfa';
+        ctx.fillText('Нажми R для перезапуска', W/2, H/2 + 30);
+      }
+    }
+
+    function loop() {
+      update();
+      draw();
+      requestAnimationFrame(loop);
+    }
+
+    document.addEventListener('keydown', e => {
+      keys[e.key] = true;
+      if (e.key === ' ')            { ball.moving = true; e.preventDefault(); }
+      if (e.key === 'r' || e.key === 'R') init();
+      if (['ArrowLeft','ArrowRight'].includes(e.key)) e.preventDefault();
+    });
+    document.addEventListener('keyup',  e => { keys[e.key] = false; });
+
+    canvas.addEventListener('mousemove', e => {
+      const rect = canvas.getBoundingClientRect();
+      const mx   = e.clientX - rect.left;
+      paddle.x   = Math.max(0, Math.min(W - paddle.w, mx - paddle.w/2));
+      if (!ball.moving) ball.x = paddle.x + paddle.w/2;
+    });
+
+    canvas.addEventListener('click', () => { ball.moving = true; });
+
+    init();
+    loop();
+  </script>
+</body>
+</html>

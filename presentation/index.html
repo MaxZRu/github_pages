@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Урок: GitHub Pages</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <div class="presentation">
+    <a href="../index.html" class="back-btn">← К играм</a>
+    <h1>📖 Урок: GitHub Pages</h1>
+
+    <!-- ===================== SLIDES ===================== -->
+    <div id="slides">
+
+      <div class="slide active">
+        <div class="slide-number">Слайд 1 / 10</div>
+        <h2>🌐 Что такое GitHub Pages?</h2>
+        <p>GitHub Pages — это <span class="highlight">бесплатный хостинг</span> от GitHub,
+        который публикует файлы из репозитория как настоящий сайт в интернете.</p>
+        <br>
+        <ul>
+          <li>Работает с HTML, CSS и JavaScript</li>
+          <li>Сервер не нужен — GitHub всё делает сам</li>
+          <li>Сайт появляется автоматически после включения опции</li>
+          <li>Адрес: <code style="color:#f59e0b">https://username.github.io/repo-name/</code></li>
+        </ul>
+        <br>
+        <p>Игровой хаб, который ты только что видел — <span class="highlight">и есть пример GitHub Pages!</span></p>
+      </div>
+
+      <div class="slide">
+        <div class="slide-number">Слайд 2 / 10</div>
+        <h2>🔓 Репозиторий должен быть публичным</h2>
+        <p>GitHub Pages работает только с <span class="highlight">публичными</span> репозиториями
+        на бесплатном аккаунте.</p>
+        <br>
+        <ul>
+          <li>🟢 <b>Public</b> — виден всем, GitHub Pages включается</li>
+          <li>🔴 <b>Private</b> — скрыт, GitHub Pages требует платный план</li>
+        </ul>
+        <br>
+        <p>При создании репозитория всегда выбирай <span class="highlight">Public</span>!</p>
+        <div class="code-box">
+GitHub → New repository<br>
+→ Repository name: my-project<br>
+→ ✅ <span class="highlight">Public</span>   ← вот это важно!<br>
+→ Add a README file ✅<br>
+→ Create repository
+        </div>
+      </div>
+
+      <div class="slide">
+        <div class="slide-number">Слайд 3 / 10</div>
+        <h2>📛 Как назвать репозиторий?</h2>
+        <p>У GitHub Pages есть два режима:</p>
+        <div class="code-box"><b>Режим 1 — Личный сайт (один на аккаунт)</b><br>
+Репозиторий:  <span class="highlight">username.github.io</span><br>
+Адрес сайта:  https://username.github.io/<br>
+<br>
+Пример: maxzru.github.io → https://maxzru.github.io/</div>
+
+        <div class="code-box"><b>Режим 2 — Проектный сайт (наш случай)</b><br>
+Репозиторий:  <span class="highlight">любое-имя</span> (например: github_pages)<br>
+Адрес сайта:  https://username.github.io/любое-имя/<br>
+<br>
+Пример: github_pages → https://maxzru.github.io/github_pages/</div>
+      </div>
+
+      <div class="slide">
+        <div class="slide-number">Слайд 4 / 10</div>
+        <h2>📁 Структура папок проекта</h2>
+        <p>Посмотри, как организован этот проект:</p>
+        <div class="code-box">github_pages/                ← корень репозитория<br>
+├── <span class="highlight">index.html</span>           ← главная страница<br>
+├── css/<br>
+│   └── style.css            ← общие стили<br>
+├── games/<br>
+│   ├── tetris/<br>
+│   │   └── index.html       ← тетрис<br>
+│   ├── snake/<br>
+│   │   └── index.html       ← змейка<br>
+│   └── arkanoid/<br>
+│       └── index.html       ← арканоид<br>
+└── presentation/<br>
+    └── index.html           ← эта презентация!</div>
+        <p>Каждая страница — это папка с файлом <code style="color:#f59e0b">index.html</code> внутри.</p>
+      </div>
+
+      <div class="slide">
+        <div class="slide-number">Слайд 5 / 10</div>
+        <h2>🏠 index.html — входная дверь</h2>
+        <p>Когда браузер открывает папку, он автоматически ищет <span class="highlight">index.html</span> — это главный файл страницы.</p>
+        <div class="code-box"><b>URL без имени файла:</b><br>
+https://site.com/games/tetris/<br>
+→ открывает: games/tetris/<span class="highlight">index.html</span><br>
+<br>
+<b>Корень репозитория:</b><br>
+https://site.com/<br>
+→ открывает: <span class="highlight">index.html</span> в корне</div>
+        <p>Поэтому называй главные файлы каждого раздела <span class="highlight">index.html</span> —
+        тогда URL будет коротким и красивым!</p>
+      </div>
+
+      <div class="slide">
+        <div class="slide-number">Слайд 6 / 10</div>
+        <h2>🔗 Относительные пути</h2>
+        <p>В HTML-файлах ссылки должны быть <span class="highlight">относительными</span> — без
+        <code style="color:#f59e0b">http://</code>. Это важно, чтобы сайт работал и локально, и на GitHub!</p>
+        <div class="code-box"><b>Из корня (index.html):</b><br>
+&lt;link href="<span class="highlight">css/style.css</span>"&gt;<br>
+&lt;a href="<span class="highlight">games/tetris/</span>"&gt;Тетрис&lt;/a&gt;<br>
+<br>
+<b>Из games/tetris/index.html:</b><br>
+&lt;link href="<span class="highlight">../../css/style.css</span>"&gt;<br>
+&lt;a href="<span class="highlight">../../index.html</span>"&gt;← Назад&lt;/a&gt;<br>
+<br>
+<span class="highlight">..</span> означает «подняться на одну папку выше»</div>
+      </div>
+
+      <div class="slide">
+        <div class="slide-number">Слайд 7 / 10</div>
+        <h2>⚙️ Как включить GitHub Pages?</h2>
+        <p>Шесть шагов в настройках репозитория:</p>
+        <div class="code-box">1. Открой свой репозиторий на GitHub<br>
+2. Нажми ⚙️ <span class="highlight">Settings</span> (в верхнем меню)<br>
+3. В левой панели найди раздел <span class="highlight">Pages</span><br>
+4. Source: выбери <span class="highlight">Deploy from a branch</span><br>
+5. Branch: <span class="highlight">main</span> &nbsp;|&nbsp; Folder: <span class="highlight">/ (root)</span><br>
+6. Нажми <span class="highlight">Save</span></div>
+        <p>Через 1–3 минуты сайт появится. GitHub покажет его адрес на той же странице Settings → Pages.</p>
+      </div>
+
+      <div class="slide">
+        <div class="slide-number">Слайд 8 / 10</div>
+        <h2>🌍 Адрес сайта</h2>
+        <p>GitHub автоматически создаёт адрес по шаблону:</p>
+        <div class="code-box">https://<span class="highlight">твой-логин</span>.github.io/<span class="highlight">имя-репозитория</span>/<br>
+<br>
+Пример для этого проекта:<br>
+https://maxzru.github.io/github_pages/<br>
+<br>
+Тетрис будет доступен по:<br>
+https://maxzru.github.io/github_pages/games/tetris/</div>
+        <p>Этот адрес можно отправлять друзьям — сайт увидит <span class="highlight">любой человек в интернете</span>!</p>
+        <br>
+        <p>После каждого <code style="color:#f59e0b">git push</code> сайт обновляется автоматически (за 1–2 минуты).</p>
+      </div>
+
+      <div class="slide">
+        <div class="slide-number">Слайд 9 / 10</div>
+        <h2>✅ Что работает / не работает</h2>
+        <ul>
+          <li>✅ HTML, CSS, JavaScript</li>
+          <li>✅ Игры на Canvas и WebGL</li>
+          <li>✅ Картинки, видео, шрифты, иконки</li>
+          <li>✅ Несколько страниц с навигацией</li>
+          <li>✅ Внешние библиотеки (React, Three.js и др.)</li>
+        </ul>
+        <br>
+        <ul>
+          <li>❌ Серверный код (PHP, Python, Node.js)</li>
+          <li>❌ Базы данных</li>
+          <li>❌ Регистрация / вход пользователей (без сторонних сервисов)</li>
+        </ul>
+        <br>
+        <p>GitHub Pages — <span class="highlight">статический хостинг</span>. Идеально для учебных проектов, игр и портфолио!</p>
+      </div>
+
+      <div class="slide">
+        <div class="slide-number">Слайд 10 / 10</div>
+        <h2>🎉 Итого — главное за одну минуту</h2>
+        <ul>
+          <li>GitHub Pages — <span class="highlight">бесплатный хостинг</span> прямо внутри GitHub</li>
+          <li>Репозиторий должен быть <span class="highlight">Public</span></li>
+          <li>Главный файл каждого раздела называй <span class="highlight">index.html</span></li>
+          <li>Используй <span class="highlight">относительные пути</span> для ссылок (<code style="color:#f59e0b">../../css/style.css</code>)</li>
+          <li>Включается в <span class="highlight">Settings → Pages → main / root → Save</span></li>
+          <li>Обновляется автоматически после каждого <span class="highlight">git push</span></li>
+        </ul>
+        <br>
+        <p style="text-align:center; font-size:1.3em; color:#a78bfa;">Теперь у тебя есть всё для создания своего сайта! 🚀</p>
+        <br>
+        <div style="text-align:center; margin-top:20px;">
+          <a href="../index.html"
+             style="display:inline-block;padding:14px 36px;background:linear-gradient(135deg,#4c1d95,#7c3aed);
+                    color:#fff;border-radius:30px;text-decoration:none;font-weight:bold;font-size:1.1em;
+                    box-shadow:0 4px 20px #7c3aed44;">
+            🎮 Играть!
+          </a>
+        </div>
+      </div>
+
+    </div><!-- /slides -->
+
+    <!-- Navigation -->
+    <div class="nav-buttons">
+      <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)" disabled>← Назад</button>
+      <div class="progress-dots" id="dots"></div>
+      <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)">Вперёд →</button>
+    </div>
+  </div>
+
+  <script>
+    let current = 0;
+    const slides = document.querySelectorAll('.slide');
+    const total  = slides.length;
+    const dotsEl = document.getElementById('dots');
+
+    slides.forEach((_, i) => {
+      const d = document.createElement('div');
+      d.className = 'dot' + (i === 0 ? ' active' : '');
+      d.title = `Слайд ${i+1}`;
+      d.onclick = () => goTo(i);
+      dotsEl.appendChild(d);
+    });
+
+    function goTo(n) {
+      slides[current].classList.remove('active');
+      dotsEl.children[current].classList.remove('active');
+      current = Math.max(0, Math.min(total-1, n));
+      slides[current].classList.add('active');
+      dotsEl.children[current].classList.add('active');
+      document.getElementById('prevBtn').disabled = current === 0;
+      document.getElementById('nextBtn').disabled = current === total-1;
+    }
+
+    function changeSlide(d) { goTo(current + d); }
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'ArrowRight' && current < total-1) changeSlide(1);
+      if (e.key === 'ArrowLeft'  && current > 0)      changeSlide(-1);
+    });
+  </script>
+</body>
+</html>
